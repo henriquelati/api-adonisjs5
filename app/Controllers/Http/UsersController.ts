@@ -1,28 +1,31 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import CreateUserValidator from 'App/Validators/CreateUserValidator'
-import Database from '@ioc:Adonis/Lucid/Database'
+import { usersService } from '../../Services/UsersService';
+import ICreateUser from '../../interfaces/CreateUser';
 
 export default class UsersController {
-  public async index(ctx: HttpContextContract) {
-    return Database.from('users').select('*').orderBy('usr_id', 'asc');
+  public async index() {
+    return usersService.index();
   }
 
   public async find(ctx: HttpContextContract) {
     const id = ctx.request.params().id;
-    return Database.from('users').select('*').where('usr_id', id);
+
+    return usersService.find(id);
   }
 
   public async store(ctx: HttpContextContract) {
     var payload = await ctx.request.validate(CreateUserValidator);
-    Object.keys(payload).map(function (key) {
-      payload[`usr_${key}`] = payload[key];
-      delete payload[key];
-    });
 
-    const id = await Database.table('users').insert(payload).returning('usr_id');
-    return {
-      id,
-      message: 'user successfully added'
+    const data: ICreateUser = {
+      name: payload.name,
+      email: payload.email,
+      active: payload.active,
+      password: payload.password,
+      phone: payload.phone,
+      document: payload.document,
     };
+
+    return usersService.store(data);
   }
 }

@@ -1,7 +1,9 @@
 {
-  "extends": ["plugin:adonis/typescriptApp", "prettier"],
-  "plugins": ["prettier"],
+  "extends": [
+    "@eduzz/eslint-config-houston"
+  ],
   "rules": {
-    "prettier/prettier": ["error"]
+    "prettier/prettier": ["error"],
+    "no-restricted-imports": ["error", "date-fns", "lodash"]
   }
 }
